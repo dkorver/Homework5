@@ -1,0 +1,45 @@
+---
+title: "ST558 Homework 5"
+format: html
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| message: true
+library(tidyverse)
+```
+
+## Task 1: Read in the Data and Modify
+
+We are using data from the [UCI machine learning repository](https://archive.ics.uci.edu/dataset/320/student+performance). The data is about secondary education in two Portuguese schools. First, I used the code they provided with the download to read in the data from a local file source and combine the two data frames.
+
+```{r}
+
+#Using the code given from the download package
+d1=read.table("student-mat.csv",sep=";",header=TRUE)
+d2=read.table("student-por.csv",sep=";",header=TRUE)
+
+d3=merge(d1,d2,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
+print(nrow(d3)) # 382 students
+
+```
+
+Then I read in and combined the data using functions from the `tidyverse`. I used inner_join() on the variables they used in their code.
+
+```{r}
+
+d3=inner_join(d1,d2,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
+
+```
+
+I then used an inner_join() on all variables other than G1, G2, G3, paid, and absences. I used this dataframe of the combined data in further exercises.
+
+```{r}
+
+#G1, G2, G3, paid, absences
+d1_selected <- d1 %>% select(-G1, -G2, -G3, -paid, -absences)
+d2_selected <- d2 %>% select(-G1, -G2, -G3, -paid, -absences)
+d3_selected=inner_join(d1_selected,d2_selected,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
+
+```
