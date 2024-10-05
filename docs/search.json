@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "HW5_DKorver.html",
+    "href": "HW5_DKorver.html",
+    "title": "ST558 Homework 5",
+    "section": "",
+    "text": "── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.4     ✔ readr     2.1.5\n✔ forcats   1.0.0     ✔ stringr   1.5.1\n✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n✔ lubridate 1.9.3     ✔ tidyr     1.3.1\n✔ purrr     1.0.2     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors"
+  },
+  {
+    "objectID": "HW5_DKorver.html#task-1-read-in-the-data-and-modify",
+    "href": "HW5_DKorver.html#task-1-read-in-the-data-and-modify",
+    "title": "ST558 Homework 5",
+    "section": "Task 1: Read in the Data and Modify",
+    "text": "Task 1: Read in the Data and Modify\nWe are using data from the UCI machine learning repository. The data is about secondary education in two Portuguese schools. First, I used the code they provided with the download to read in the data from a local file source and combine the two data frames.\n\n#Using the code given from the download package\nd1=read.table(\"student-mat.csv\",sep=\";\",header=TRUE)\nd2=read.table(\"student-por.csv\",sep=\";\",header=TRUE)\n\nd3=merge(d1,d2,by=c(\"school\",\"sex\",\"age\",\"address\",\"famsize\",\"Pstatus\",\"Medu\",\"Fedu\",\"Mjob\",\"Fjob\",\"reason\",\"nursery\",\"internet\"))\nprint(nrow(d3)) # 382 students\n\n[1] 382\n\n\nThen I read in and combined the data using functions from the tidyverse. I used inner_join() on the variables they used in their code.\n\nd3=inner_join(d1,d2,by=c(\"school\",\"sex\",\"age\",\"address\",\"famsize\",\"Pstatus\",\"Medu\",\"Fedu\",\"Mjob\",\"Fjob\",\"reason\",\"nursery\",\"internet\"))\n\nWarning in inner_join(d1, d2, by = c(\"school\", \"sex\", \"age\", \"address\", : Detected an unexpected many-to-many relationship between `x` and `y`.\nℹ Row 79 of `x` matches multiple rows in `y`.\nℹ Row 79 of `y` matches multiple rows in `x`.\nℹ If a many-to-many relationship is expected, set `relationship =\n  \"many-to-many\"` to silence this warning.\n\n\nI then used an inner_join() on all variables other than G1, G2, G3, paid, and absences. I used this dataframe of the combined data in further exercises.\n\n#G1, G2, G3, paid, absences\nd1_selected &lt;- d1 %&gt;% select(-G1, -G2, -G3, -paid, -absences)\nd2_selected &lt;- d2 %&gt;% select(-G1, -G2, -G3, -paid, -absences)\nd3_selected=inner_join(d1_selected,d2_selected,by=c(\"school\",\"sex\",\"age\",\"address\",\"famsize\",\"Pstatus\",\"Medu\",\"Fedu\",\"Mjob\",\"Fjob\",\"reason\",\"nursery\",\"internet\"))\n\nWarning in inner_join(d1_selected, d2_selected, by = c(\"school\", \"sex\", : Detected an unexpected many-to-many relationship between `x` and `y`.\nℹ Row 79 of `x` matches multiple rows in `y`.\nℹ Row 79 of `y` matches multiple rows in `x`.\nℹ If a many-to-many relationship is expected, set `relationship =\n  \"many-to-many\"` to silence this warning."
+  }
+]
