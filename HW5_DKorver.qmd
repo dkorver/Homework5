@@ -8,6 +8,9 @@ editor: visual
 #| echo: false
 #| message: true
 library(tidyverse)
+library(ellipse)
+math <- read.table("student-mat.csv",sep=";",header=TRUE)
+portuguese <- read.table("student-por.csv",sep=";",header=TRUE)
 ```
 
 ## Task 1: Read in the Data and Modify
@@ -43,3 +46,29 @@ d2_selected <- d2 %>% select(-G1, -G2, -G3, -paid, -absences)
 d3_selected=inner_join(d1_selected,d2_selected,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
 
 ```
+
+I then converted four categorical variables into factors: Medu (mother's education), Fedu (father's education), sex, and famsize (family size). 
+
+```{r}
+
+d3_selected <- d3_selected |>
+  mutate(SexF = factor(sex, levels = c("F", "M"), labels = c("Female", "Male")),
+         MeduF = as.factor(Medu),
+         FeduF = as.factor(Fedu),
+         famsizeF = as.factor(famsize))
+
+math <- math |>
+  mutate(SexF = factor(sex, levels = c("F", "M"), labels = c("Female", "Male")),
+         MeduF = as.factor(Medu),
+         FeduF = as.factor(Fedu),
+         famsizeF = as.factor(famsize))
+
+portuguese <- portuguese |>
+  mutate(SexF = factor(sex, levels = c("F", "M"), labels = c("Female", "Male")),
+         MeduF = as.factor(Medu),
+         FeduF = as.factor(Fedu),
+         famsizeF = as.factor(famsize))
+
+```
+
+
