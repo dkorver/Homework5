@@ -42,6 +42,8 @@ d3_selected |> count(sex,SexF)
 d3_selected |> count(famrel.x)
 d3_selected |> count(traveltime.x)
 
+table(d3_selected$sex)
+
 #age,absences,G3 G1 G2 G3
 d1 <- d1 |>
   mutate(SexF = factor(sex, levels = c("F", "M"), labels = c("Female", "Male")),
@@ -123,6 +125,9 @@ ggplot(math, aes(x=age, fill=sex)) +
 ggplot(math, aes(x=age, colour=sex)) + geom_density()
 
 ggplot(math, aes(x=G3, y=absences, fill=sex)) + geom_boxplot()
+
+
+
 
 ggplot(math, aes(x=absences, y=G3)) +
   geom_point(shape=1,position=position_jitter(width=1,height=.5))

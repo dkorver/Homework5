@@ -90,6 +90,19 @@ na_counts
 
 ```
 
+### Categorical variables
+
+```{r}
+
+#one way
+table(d3_selected$sex)
+#two way
+table(d3_selected$sex,d3_selected$famsize)
+#three way
+table(d3_selected$sex,d3_selected$famsize,d3_selected$famsize)
+
+```
+
 ### Numeric variables
 
 The numeric variables are age, absences, and the three test grades variables (G1, G2, and G3) from each
@@ -191,3 +204,33 @@ as_tibble(ctab_math)
 
 ```
 
+I then created a histogram, kernel density plot, and boxplot for both datasets.
+```{r}
+
+ggplot(math, aes(x=age, fill=sex)) +
+  geom_histogram(binwidth=.5, alpha=.5, position="dodge")
+
+ggplot(math, aes(x=age, colour=sex)) + geom_density()
+
+ggplot(math, aes(x=G3, y=absences, fill=sex)) + geom_boxplot()
+
+ggplot(portuguese, aes(x=age, fill=sex)) +
+  geom_histogram(binwidth=.5, alpha=.5, position="dodge")
+
+ggplot(portuguese, aes(x=age, colour=sex)) + geom_density()
+
+ggplot(portuguese, aes(x=G3, y=absences, fill=sex)) + geom_boxplot()
+
+```
+
+I then created two scatterplots relating the G3 with absences by sex.
+
+```{r}
+
+ggplot(math, aes(x=absences, y=G3, colour = sex)) +
+  geom_point(shape=1,position=position_jitter(width=1,height=.5))
+
+ggplot(portuguese, aes(x=absences, y=G3, colour = sex)) +
+  geom_point(shape=1,position=position_jitter(width=1,height=.5))
+
+```
