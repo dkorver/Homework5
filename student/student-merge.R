@@ -15,8 +15,8 @@ d1_selected <- d1 %>% select(-G1, -G2, -G3, -paid, -absences)
 d2_selected <- d2 %>% select(-G1, -G2, -G3, -paid, -absences)
 d3_selected=inner_join(d1_selected,d2_selected,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
 
-class(d1)
-typeof(d1)
+class(d3_selected)
+typeof(d3_selected)
 
 sum_na <- function(column){
   sum(is.na(column))

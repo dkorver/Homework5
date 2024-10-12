@@ -213,8 +213,227 @@ The following object is masked from 'package:graphics':
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">FeduF =</span> <span class="fu">as.factor</span>(Fedu),</span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">famsizeF =</span> <span class="fu">as.factor</span>(famsize))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="task-2-summarize-the-data-very-basic-eda" class="level2">
+<h2 class="anchored" data-anchor-id="task-2-summarize-the-data-very-basic-eda">Task 2: Summarize the Data (Very basic EDA)</h2>
+<p>I then looked at how the data is stored and looking at missing values.The documentation says there are no missing values in the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(d3_selected)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(d3_selected)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "list"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sum_na <span class="ot">&lt;-</span> <span class="cf">function</span>(column){</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">is.na</span>(column))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>na_counts <span class="ot">&lt;-</span> d3_selected <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), sum_na))</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>na_counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  school sex age address famsize Pstatus Medu Fedu Mjob Fjob reason guardian.x
+1      0   0   0       0       0       0    0    0    0    0      0          0
+  traveltime.x studytime.x failures.x schoolsup.x famsup.x activities.x nursery
+1            0           0          0           0        0            0       0
+  higher.x internet romantic.x famrel.x freetime.x goout.x Dalc.x Walc.x
+1        0        0          0        0          0       0      0      0
+  health.x guardian.y traveltime.y studytime.y failures.y schoolsup.y famsup.y
+1        0          0            0           0          0           0        0
+  activities.y higher.y romantic.y famrel.y freetime.y goout.y Dalc.y Walc.y
+1            0        0          0        0          0       0      0      0
+  health.y SexF MeduF FeduF famsizeF
+1        0    0     0     0        0</code></pre>
+</div>
+</div>
+<section id="numeric-variables" class="level3">
+<h3 class="anchored" data-anchor-id="numeric-variables">Numeric variables</h3>
+<p>The numeric variables are age, absences, and the three test grades variables (G1, G2, and G3) from each data set (math and Portuguese). Lets first take a look at the measures of center and spread for the numeric variables from the math and Portuguese data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>math_stats <span class="ot">&lt;-</span> math <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age,absences,G1,G2,G3) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="st">"mean"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"median"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"sd"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"iqr"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">IQR</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.fn}_{.col}"</span>))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>math_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  mean_age median_age   sd_age iqr_age mean_absences median_absences
+1  16.6962         17 1.276043       2      5.708861               4
+  sd_absences iqr_absences  mean_G1 median_G1    sd_G1 iqr_G1  mean_G2
+1    8.003096            8 10.90886        11 3.319195      5 10.71392
+  median_G2    sd_G2 iqr_G2  mean_G3 median_G3    sd_G3 iqr_G3
+1        11 3.761505      4 10.41519        11 4.581443      6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>portuguese_stats <span class="ot">&lt;-</span> portuguese <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age,absences,G1,G2,G3) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="st">"mean"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"median"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"sd"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"iqr"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">IQR</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.fn}_{.col}"</span>))</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>portuguese_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  mean_age median_age   sd_age iqr_age mean_absences median_absences
+1 16.74422         17 1.218138       2      3.659476               2
+  sd_absences iqr_absences  mean_G1 median_G1    sd_G1 iqr_G1  mean_G2
+1    4.640759            6 11.39908        11 2.745265      3 11.57011
+  median_G2    sd_G2 iqr_G2  mean_G3 median_G3    sd_G3 iqr_G3
+1        11 2.913639      3 11.90601        12 3.230656      4</code></pre>
+</div>
+</div>
+<p>I then looked at the measures of center and spread for the numeric variables from the math and Portuguese data grouped by sex and then grouped by sex and studytime.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>math_stats_by_sex <span class="ot">&lt;-</span> math <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex,age,absences,G1,G2,G3) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="st">"mean"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"median"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"sd"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"iqr"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">IQR</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.fn}_{.col}"</span>))</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>math_stats_by_sex</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 21
+  sex   mean_age median_age sd_age iqr_age mean_absences median_absences
+  &lt;chr&gt;    &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;
+1 F         16.7         17   1.20       2          6.22               4
+2 M         16.7         16   1.36       2          5.14               4
+# ℹ 14 more variables: sd_absences &lt;dbl&gt;, iqr_absences &lt;dbl&gt;, mean_G1 &lt;dbl&gt;,
+#   median_G1 &lt;dbl&gt;, sd_G1 &lt;dbl&gt;, iqr_G1 &lt;dbl&gt;, mean_G2 &lt;dbl&gt;, median_G2 &lt;dbl&gt;,
+#   sd_G2 &lt;dbl&gt;, iqr_G2 &lt;dbl&gt;, mean_G3 &lt;dbl&gt;, median_G3 &lt;dbl&gt;, sd_G3 &lt;dbl&gt;,
+#   iqr_G3 &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>math_stats_by_sex_study <span class="ot">&lt;-</span> math <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex,age,absences,G1,G2,G3,studytime) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex,studytime) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="st">"mean"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"median"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"sd"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"iqr"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">IQR</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.fn}_{.col}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'sex'. You can override using the `.groups`
+argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>math_stats_by_sex_study</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 22
+# Groups:   sex [2]
+  sex   studytime mean_age median_age sd_age iqr_age mean_absences
+  &lt;chr&gt;     &lt;int&gt;    &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;
+1 F             1     16.3       16    0.984    1.5           6.96
+2 F             2     16.7       17    1.18     2             6.96
+3 F             3     17.0       17    1.28     2             4.76
+4 F             4     16.8       17    1.30     2             4.47
+5 M             1     16.8       16.5  1.45     2             5.35
+6 M             2     16.7       17    1.27     2             5.38
+7 M             3     16.8       17    1.31     2             3.71
+8 M             4     15.5       15    0.972    0.75          3.6 
+# ℹ 15 more variables: median_absences &lt;dbl&gt;, sd_absences &lt;dbl&gt;,
+#   iqr_absences &lt;dbl&gt;, mean_G1 &lt;dbl&gt;, median_G1 &lt;dbl&gt;, sd_G1 &lt;dbl&gt;,
+#   iqr_G1 &lt;dbl&gt;, mean_G2 &lt;dbl&gt;, median_G2 &lt;dbl&gt;, sd_G2 &lt;dbl&gt;, iqr_G2 &lt;dbl&gt;,
+#   mean_G3 &lt;dbl&gt;, median_G3 &lt;dbl&gt;, sd_G3 &lt;dbl&gt;, iqr_G3 &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>portuguese_stats_by_sex <span class="ot">&lt;-</span> portuguese <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex,age,absences,G1,G2,G3) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex) <span class="sc">|&gt;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="st">"mean"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"median"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"sd"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"iqr"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">IQR</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.fn}_{.col}"</span>))</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>portuguese_stats_by_sex</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 21
+  sex   mean_age median_age sd_age iqr_age mean_absences median_absences
+  &lt;chr&gt;    &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;
+1 F         16.8         17   1.18       2          3.58               2
+2 M         16.7         17   1.28       2          3.78               2
+# ℹ 14 more variables: sd_absences &lt;dbl&gt;, iqr_absences &lt;dbl&gt;, mean_G1 &lt;dbl&gt;,
+#   median_G1 &lt;dbl&gt;, sd_G1 &lt;dbl&gt;, iqr_G1 &lt;dbl&gt;, mean_G2 &lt;dbl&gt;, median_G2 &lt;dbl&gt;,
+#   sd_G2 &lt;dbl&gt;, iqr_G2 &lt;dbl&gt;, mean_G3 &lt;dbl&gt;, median_G3 &lt;dbl&gt;, sd_G3 &lt;dbl&gt;,
+#   iqr_G3 &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>portuguese_stats_by_sex_study <span class="ot">&lt;-</span> portuguese <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex,age,absences,G1,G2,G3,studytime) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex,studytime) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(<span class="st">"mean"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"median"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"sd"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"iqr"</span> <span class="ot">=</span> <span class="er">~</span><span class="fu">IQR</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">"{.fn}_{.col}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'sex'. You can override using the `.groups`
+argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>portuguese_stats_by_sex_study</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 22
+# Groups:   sex [2]
+  sex   studytime mean_age median_age sd_age iqr_age mean_absences
+  &lt;chr&gt;     &lt;int&gt;    &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;
+1 F             1     16.6       17     1.16    1             4.06
+2 F             2     16.8       17     1.15    2             3.61
+3 F             3     16.9       17     1.25    2             3.07
+4 F             4     16.7       17     1.20    2             3.10
+5 M             1     16.8       17     1.30    2             4.54
+6 M             2     16.6       17     1.25    1.5           3.59
+7 M             3     16.8       16.5   1.19    2             1.09
+8 M             4     15.9       15     1.17    1.75          2.71
+# ℹ 15 more variables: median_absences &lt;dbl&gt;, sd_absences &lt;dbl&gt;,
+#   iqr_absences &lt;dbl&gt;, mean_G1 &lt;dbl&gt;, median_G1 &lt;dbl&gt;, sd_G1 &lt;dbl&gt;,
+#   iqr_G1 &lt;dbl&gt;, mean_G2 &lt;dbl&gt;, median_G2 &lt;dbl&gt;, sd_G2 &lt;dbl&gt;, iqr_G2 &lt;dbl&gt;,
+#   mean_G3 &lt;dbl&gt;, median_G3 &lt;dbl&gt;, sd_G3 &lt;dbl&gt;, iqr_G3 &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>I then looked at the correlation matrix for both datasets of the numeric variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ctab_math <span class="ot">&lt;-</span> math <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age,absences,G1,G2,G3) <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>()</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(ctab_math)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+      age absences      G1      G2      G3
+    &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1  1        0.175  -0.0641 -0.143  -0.162 
+2  0.175    1      -0.0310 -0.0318  0.0342
+3 -0.0641  -0.0310  1       0.852   0.801 
+4 -0.143   -0.0318  0.852   1       0.905 
+5 -0.162    0.0342  0.801   0.905   1     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>ctab_portuguese <span class="ot">&lt;-</span> portuguese <span class="sc">|&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(age,absences,G1,G2,G3) <span class="sc">|&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>()</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(ctab_math)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+      age absences      G1      G2      G3
+    &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1  1        0.175  -0.0641 -0.143  -0.162 
+2  0.175    1      -0.0310 -0.0318  0.0342
+3 -0.0641  -0.0310  1       0.852   0.801 
+4 -0.143   -0.0318  0.852   1       0.905 
+5 -0.162    0.0342  0.801   0.905   1     </code></pre>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

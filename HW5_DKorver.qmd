@@ -47,7 +47,7 @@ d3_selected=inner_join(d1_selected,d2_selected,by=c("school","sex","age","addres
 
 ```
 
-I then converted four categorical variables into factors: Medu (mother's education), Fedu (father's education), sex, and famsize (family size). 
+I then converted four categorical variables into factors: Medu (mother's education), Fedu (father's education), sex, and famsize (family size).
 
 ```{r}
 
@@ -71,4 +71,123 @@ portuguese <- portuguese |>
 
 ```
 
+## Task 2: Summarize the Data (Very basic EDA)
+
+I then looked at how the data is stored and looking at missing values.The documentation says there are no missing values in the data.
+
+```{r}
+
+class(d3_selected)
+typeof(d3_selected)
+
+sum_na <- function(column){
+  sum(is.na(column))
+}
+
+na_counts <- d3_selected |>
+  summarize(across(everything(), sum_na))
+na_counts
+
+```
+
+### Numeric variables
+
+The numeric variables are age, absences, and the three test grades variables (G1, G2, and G3) from each
+data set (math and Portuguese).  Lets first take a look at the measures of center and spread for the numeric variables from the math and Portuguese data.
+
+```{r}
+
+math_stats <- math |>
+  select(age,absences,G1,G2,G3) |>
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x, na.rm = TRUE), 
+                        "median" = ~ median(.x, na.rm = TRUE),
+                        "sd" = ~sd(.x, na.rm = TRUE),
+                        "iqr" = ~IQR(.x, na.rm = TRUE)), 
+                   .names = "{.fn}_{.col}"))
+
+math_stats
+
+portuguese_stats <- portuguese |>
+  select(age,absences,G1,G2,G3) |>
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x, na.rm = TRUE), 
+                        "median" = ~ median(.x, na.rm = TRUE),
+                        "sd" = ~sd(.x, na.rm = TRUE),
+                        "iqr" = ~IQR(.x, na.rm = TRUE)), 
+                   .names = "{.fn}_{.col}"))
+
+portuguese_stats
+
+```
+
+I then looked at the measures of center and spread for the numeric variables from the math and Portuguese data grouped by sex and then grouped by sex and studytime.
+
+```{r}
+
+math_stats_by_sex <- math |>
+  select(sex,age,absences,G1,G2,G3) |>
+  group_by(sex) |>
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x, na.rm = TRUE), 
+                        "median" = ~ median(.x, na.rm = TRUE),
+                        "sd" = ~sd(.x, na.rm = TRUE),
+                        "iqr" = ~IQR(.x, na.rm = TRUE)), 
+                   .names = "{.fn}_{.col}"))
+
+math_stats_by_sex
+
+math_stats_by_sex_study <- math |>
+  select(sex,age,absences,G1,G2,G3,studytime) |>
+  group_by(sex,studytime) |>
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x, na.rm = TRUE), 
+                        "median" = ~ median(.x, na.rm = TRUE),
+                        "sd" = ~sd(.x, na.rm = TRUE),
+                        "iqr" = ~IQR(.x, na.rm = TRUE)), 
+                   .names = "{.fn}_{.col}"))
+
+math_stats_by_sex_study
+
+portuguese_stats_by_sex <- portuguese |>
+  select(sex,age,absences,G1,G2,G3) |>
+  group_by(sex) |>
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x, na.rm = TRUE), 
+                        "median" = ~ median(.x, na.rm = TRUE),
+                        "sd" = ~sd(.x, na.rm = TRUE),
+                        "iqr" = ~IQR(.x, na.rm = TRUE)), 
+                   .names = "{.fn}_{.col}"))
+
+portuguese_stats_by_sex
+
+portuguese_stats_by_sex_study <- portuguese |>
+  select(sex,age,absences,G1,G2,G3,studytime) |>
+  group_by(sex,studytime) |>
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x, na.rm = TRUE), 
+                        "median" = ~ median(.x, na.rm = TRUE),
+                        "sd" = ~sd(.x, na.rm = TRUE),
+                        "iqr" = ~IQR(.x, na.rm = TRUE)), 
+                   .names = "{.fn}_{.col}"))
+
+portuguese_stats_by_sex_study
+
+```
+
+I then looked at the correlation matrix for both datasets of the numeric variables.
+
+```{r}
+
+ctab_math <- math |>
+  select(age,absences,G1,G2,G3) |>
+  cor()
+as_tibble(ctab_math)
+
+ctab_portuguese <- portuguese |>
+  select(age,absences,G1,G2,G3) |>
+  cor()
+as_tibble(ctab_math)
+
+```
 
