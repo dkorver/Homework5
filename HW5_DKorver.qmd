@@ -6,7 +6,7 @@ editor: visual
 
 ```{r}
 #| echo: false
-#| message: true
+#| message: false
 library(tidyverse)
 library(ellipse)
 math <- read.table("student-mat.csv",sep=";",header=TRUE)
